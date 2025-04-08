@@ -1,11 +1,126 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
 <Layout>
-	<Welcome />
+  <div class="sidebar">
+    <div class="menu-item" data-section="section1"></div>
+    <div class="menu-item" data-section="section2"></div>
+    <div class="menu-item" data-section="section3"></div>
+    <div class="menu-item" data-section="section4"></div>
+  </div>
+
+  <div class="content">
+    <div class="section" id="section1">Section 1</div>
+    <div class="section" id="section2">Section 2</div>
+    <div class="section" id="section3">Section 3</div>
+    <div class="section" id="section4">Section 4</div>
+  </div>
 </Layout>
+
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+  }
+
+  /* Sidebar styling */
+  .sidebar {
+    width: 80px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: #f0f0f0;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  /* Menu items (dots) */
+  .menu-item {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ccc;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  /* Content sections */
+  .content {
+    margin-left: 100px;
+    flex: 1;
+  }
+
+  .section {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+    scroll-behavior: smooth;
+  }
+
+  /* Different colors for each active state */
+  .menu-item.active-1 {
+    background: #ff6b6b;
+  }
+  .menu-item.active-2 {
+    background: #4ecdc4;
+  }
+  .menu-item.active-3 {
+    background: #45b7d1;
+  }
+  .menu-item.active-4 {
+    background: #96c93d;
+  }
+</style>
+
+<script>
+  // Handle click navigation
+  const menuItems = document.querySelectorAll(".menu-item");
+  const sections = document.querySelectorAll(".section");
+
+  menuItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      const sectionId = item.getAttribute("data-section");
+      if (sectionId) {
+        // Check if sectionId exists
+        const section = document.getElementById(sectionId);
+        if (section) {
+          // Check if element exists
+          section.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    });
+  });
+
+  // Handle scroll detection
+  window.addEventListener("scroll", () => {
+    let current = "";
+    sections.forEach((section, index) => {
+      const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+      const sectionHeight = section.clientHeight;
+
+      if (window.scrollY >= sectionTop - sectionHeight / 3) {
+        current = `section${index + 1}`;
+      }
+    });
+
+    // Update active states
+    menuItems.forEach((item, index) => {
+      item.classList.remove(`active-${index + 1}`);
+      if (item.getAttribute("data-section") === current) {
+        item.classList.add(`active-${index + 1}`);
+      }
+    });
+  });
+</script>
